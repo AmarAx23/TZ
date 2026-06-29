@@ -736,7 +736,34 @@
     }
   });
 
-  continueBtn.addEventListener('click', () => { sfxOpen(); goToGacha(); });
+  let dodgeCount = 0;
+  const MAX_DODGE = 3;
+  const dodgeLines = ['จับไม่ทันหรอก 😼', 'อีกแล้ว!', 'เกือบละ~', 'งับ!'];
+
+  function dodgeButton() {
+    const btnRect = continueBtn.getBoundingClientRect();
+    const maxX = Math.max(40, Math.min(210, window.innerWidth / 2 - btnRect.width / 2 - 16));
+    const maxY = Math.max(30, Math.min(120, window.innerHeight / 2 - btnRect.height / 2 - 16));
+    const dx = (Math.random() * maxX * 2 - maxX).toFixed(0);
+    const dy = (Math.random() * maxY * 2 - maxY).toFixed(0);
+    const rot = (Math.random() * 24 - 12).toFixed(1);
+    continueBtn.style.transition = 'transform 0.32s cubic-bezier(0.34,1.56,0.64,1)';
+    continueBtn.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg)`;
+    spawnWord(dodgeLines[Math.floor(Math.random() * dodgeLines.length)]);
+  }
+
+  continueBtn.addEventListener('click', () => {
+    if (dodgeCount < MAX_DODGE) {
+      dodgeCount++;
+      sfxTap();
+      dodgeButton();
+      return;
+    }
+    sfxOpen();
+    continueBtn.style.transition = 'transform 0.3s ease';
+    continueBtn.style.transform = 'translate(0,0) rotate(0deg)';
+    goToGacha();
+  });
 
   /* ===================== Scene transition ===================== */
   const sceneHeart = document.getElementById('sceneHeart');
